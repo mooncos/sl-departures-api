@@ -73,6 +73,9 @@ func handleDeparturesJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(departures) == 0 {
+		departures = []Departure{}
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(departures)
 }
@@ -80,7 +83,7 @@ func handleDeparturesJSON(w http.ResponseWriter, r *http.Request) {
 func getDepartures(r *http.Request) ([]Departure, string, error) {
 	siteID := r.URL.Query().Get("siteId")
 	if siteID == "" {
-		siteID = "3431" // Default site ID if not provided
+		return nil, "", fmt.Errorf("siteId query parameter is required")
 	}
 
 	response, err := fetchDepartures(siteID)
